@@ -17,7 +17,10 @@
 (test-group "curve reader"
  (let* [[head1 (open-input-file "example.head")]
         [head2 (open-input-file "all.head")]
-        [notes (open-input-file "example.notes")]
+        [p-notes (open-input-file "example.notes")]
         [head (get-head head1 head2)]
-        [output (open-output-file "freq.curve")]]
-  (write (map (lambda (a) (if (noflag? a) 'noflag-record!!! a)) (force-list (get-curve 'freq (get-notes notes head) head))) output)))
+        [output (open-output-file "freq.curve")]
+        [output1 (open-output-file "v.curve")]
+        [notes (get-notes p-notes head)]]
+  (write (map (lambda (a) (if (noflag? a) 'noflag-record!!! a)) (force-list (get-curve 'freq notes head))) output)
+  (write (map (lambda (a) (if (noflag? a) 'noflag-record!!! a)) (force-list (get-curve #\v notes head))) output1)))

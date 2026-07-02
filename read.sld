@@ -80,7 +80,7 @@
               [curver curve1]
               [c-curve #f]]
     (cond
-     [(null? lens) stream-null]
+     [(and (null? lens) (not c-curve)) stream-null]
      [(not c-curve)
       (let*-values [[[v1 v2]
                      (values (value1 record) (value2 record))]
@@ -94,7 +94,7 @@
         (points->curve (curver record) (car lens) (processor record) higher lower)))]
      [(stream-null? c-curve)
       (loop
-       (cdr lens)
+       lens
        (if (eq? curver curve1)
         curve2 curve1)
        #f)]
@@ -132,7 +132,7 @@
         (loop
          c-notes
          (cond
-          [(pair? (cdr flagpair)) (curve (cdr flagpair) linear-proc (curve-length c-notes))]
-          [(number? (cdr flagpair)) (constant-line (curve-length c-notes) (cdr flagpair))]
+          [(pair? (cdr flagpair)) (curve (cdr flagpair) linear-proc (curve-length (car flagpair) c-notes))]
+          [(number? (cdr flagpair)) (constant-line (curve-length (car flagpair) c-notes) (cdr flagpair))]
           [else (stream (cdr flagpair))]))
         (stream-cons (noflag) (loop (stream-cdr c-notes) c-curve))))])))))
