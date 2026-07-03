@@ -6,8 +6,8 @@
 (write-samples! '(1 222 3 4444) (open-binary-output-file "x.raw"))
 
 (test-group "bezier"
- (for-each (lambda (a b) (test-approximate b a (/ 44100 16))) (force-list (bezier 44100 '(0 . 0) '(0.2 . -0.3) '(0.3 . 0.4) '(0.7 . 0.1) '(0.6 . 0.7) '(1 . 1))) (read (open-input-file "curve1")))
- (for-each (lambda (a b) (test-approximate b a (/ 44100 16))) (force-list (bezier 44100 '(0 . 1) '(0.5 . 0.2) '(0.2 . 0.3) '(0.7 . 0.1) '(0.8 . -1) '(1 . 0))) (read (open-input-file "curve2")))
+ (for-each (lambda (a b) (test-approximate b a 1e-9)) (force-list (bezier 44100 '(0 . 0) '(0.2 . -0.3) '(0.3 . 0.4) '(0.7 . 0.1) '(0.6 . 0.7) '(1 . 1))) (read (open-input-file "curve1")))
+ (for-each (lambda (a b) (test-approximate b a 1e-9)) (force-list (bezier 44100 '(0 . 1) '(0.5 . 0.2) '(0.2 . 0.3) '(0.7 . 0.1) '(0.8 . -1) '(1 . 0))) (read (open-input-file "curve2")))
  (test-error "Bad curve" (bezier 3 '(0 . 1) '(0.6 . 0.2) '(0.6 . 0.4) '(0.8 . 0.3) '(0.1 . -0.8) '(1 . 0))))
 
 (test-group "fool"
@@ -19,8 +19,14 @@
         [head2 (open-input-file "all.head")]
         [p-notes (open-input-file "example.notes")]
         [head (get-head head1 head2)]
-        [output (open-output-file "freq.curve")]
-        [output1 (open-output-file "v.curve")]
         [notes (get-notes p-notes head)]]
-  (write (map (lambda (a) (if (noflag? a) 'noflag-record!!! a)) (force-list (get-curve 'freq notes head))) output)
-  (write (map (lambda (a) (if (noflag? a) 'noflag-record!!! a)) (force-list (get-curve #\v notes head))) output1)))
+  (define (curve-checker a b)
+   (if (noflag? a)
+    (test-eq 'noflag-record!!! b)
+    (test-approximate b a 1e-9)))
+  (for-each curve-checker
+   (force-list (get-curve 'freq notes head))
+   (read (open-input-file "freq.curve")))
+  (for-each curve-checker
+   (force-list (get-curve #\v notes head))
+   (read (open-input-file "v.curve")))))

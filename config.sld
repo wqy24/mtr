@@ -2,4 +2,4 @@
  (import (only (scheme base) define))
  (export SAMPLE-RATE)
  (begin
-  (define SAMPLE-RATE 32)))
+  (define SAMPLE-RATE 44100)))
