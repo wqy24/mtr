@@ -37,7 +37,7 @@
         [head (get-head head1 head2)]
         [notes (get-notes p-notes head)]]
   (define (curve-checker a b)
-   (if (noflag? a)
+   (if (procedure? a)
     (test-eq 'noflag-record!!! b)
     (test-approximate b a 1e-9)))
   (for-each curve-checker

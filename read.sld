@@ -17,7 +17,7 @@
 
 (define-library (chariot read)
  (import (scheme base) (scheme read) (wqy24 assert) (wqy24 debug) (chariot config) (chariot fool) (chariot curves) (srfi 41) (srfi 132) (srfi 1) (srfi 133))
- (export get-curve noflag? get-head get-notes)
+ (export get-curve get-head get-notes)
  (begin
   (define-record-type curve-record-record
    (curve-record processor v1 c1 v2 c2 r)
@@ -122,16 +122,12 @@
   (define (curve desc proc len)
    (curve-record->curve (get-curve-record desc proc) len))
 
-  (define-record-type noflag-record
-   (noflag)
-   noflag?)
-
   (define (get-curve name notes head)
    (let loop [[c-notes notes] [c-curve stream-null]]
     (cond
      [(stream-null? c-notes) stream-null]
      [(stream-pair? c-curve) (stream-cons (stream-car c-curve) (loop (stream-cdr c-notes) (stream-cdr c-curve)))]
-     [(not (stream-car c-notes)) (stream-cons (noflag) (loop (stream-cdr c-notes) c-curve))]
+     [(not (stream-car c-notes)) (stream-cons (lambda ? ?) (loop (stream-cdr c-notes) c-curve))]
      [(eq? name 'freq)
       (loop
        c-notes
@@ -153,4 +149,4 @@
           [(pair? (cdr flagpair)) (curve (cdr flagpair) linear-proc (curve-length (car flagpair) c-notes))]
           [(number? (cdr flagpair)) (constant-line (curve-length (car flagpair) c-notes) (cdr flagpair))]
           [else (stream (cdr flagpair))]))
-        (stream-cons (noflag) (loop (stream-cdr c-notes) c-curve))))])))))
+        (stream-cons (lambda ? ?) (loop (stream-cdr c-notes) c-curve))))])))))
