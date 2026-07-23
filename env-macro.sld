@@ -26,38 +26,36 @@
 
   (define-syntax waves
    (syntax-rules ()
-    [(_ [name chain ...] ...)
-     (internal-waves () () () [name chain ...] ...)]))
+    [(_ source-name [name chain ...] ...)
+     (internal-waves source-name () () () [name chain ...] ...)]))
 
   (define-syntax internal-waves
    (syntax-rules ()
-    [(_ (f ...) (c ...) (done ...)) (let [[clist (list c ...)]]
-     (cons (delete-duplicates (list 'freq f ...) eqv?)
-           (lambda (name flags sr)
-            (letrec [[source (source (assq 'freq flags) sr)]
-                     [@@dummy-mod@@ (lambda (ignored) (stream-of 0))]
-                     done ...]
-             ((assv name clist) flags)))))]
-    [(internal-waves (f ...) (c ...) (done ...) [name chain ...] other ...)
-     (let [[prog (lambda (flags)
+    [(_ source-name f (c ...) (done ...))
+     (cons
+      (delete-duplicates (cons 'freq (concatenate 'f)) eqv?)
+      (lambda (name flags sr)
+       (letrec [[source-name (source (assq 'freq flags) sr)] done ...]
+        ((assv name (list c ...)) flags)))))]
+    [(_ source-name (f ...) (c ...) (done ...) [name chain ...] other ...)
+     (internal-waves
+      (f ... (findf () chain) ...)
+      (c ... (cons 'name
+              #0=(lambda (flags)
                   (pipe
                    (replace-c flags chain) ...
-                   (replace-c flags (mix (<flag> #\v) @@dummy-mod@@))))]]
-      (internal-waves
-       (f ... (findf chain) ...)
-       (c ... (cons name prog))
-       ([name prog] done ...)
-       other ...))]))
+                   (replace-c flags (mix (<flag> #\v) (lambda (ignored) (stream-of 0))))))))
+      ([name #0#] done ...)
+      other ...))]))
 
   (define-syntax findf
    (syntax-rules (<flag>)
     [(findf (l ...)  (prev ... (<flag> x) post ...))
-     (findf (x l ...) (prev ... done post ...))]
+     (findf (x l ...) (prev ... post ...))]
     [(findf l done) l]))
 
   (define-syntax replace-c
    (syntax-rules (<flag>)
     [(replace-c flags (prev ... (<flag> x) post ...))
-     (replace-c flags (prev ... (assv x flags) post ...))]
-    [(_ prev ... (e ...) post ...) (syntax-error "Argument should not contain lists")]
+     (replace-c flags (prev ... (cdr (assv x flags)) post ...))]
     [(replace-c flags res) res]))))
