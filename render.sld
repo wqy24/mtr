@@ -1,4 +1,4 @@
-#| render.sld -- this file is part of SILVER: Simple Instrument buiLder for Variable for Electronic timBre
+#| render.sld -- this file is part of SILVER: Source-fILter Version sound EmitteR
  | Copyright (C) 2026 wqy24
  |
  | SILVER is free software: you can redistribute it and/or modify
