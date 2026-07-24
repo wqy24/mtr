@@ -30,4 +30,11 @@
   (#\3 (octave-rate . 2) (octave-align . 0)
    ("C-" . 1))
   (#\7 (octave-rate . 2) (octave-align . 0)
-   ("G`" . 14/9))))
+   ("G`" . 14/9)))
+ (inst-conf
+  (silver (silver render)
+   (sine
+    source
+    (resonator source)))
+  (judgement (judgement)
+   (wish1 . "Hail 2 U!"))))

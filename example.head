@@ -17,5 +17,5 @@
  |#
 
 ((engine . silver)
- (inst . (pulse . 1/4))
+ (inst . sine)
  (volume . #xAE))
