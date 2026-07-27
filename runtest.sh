@@ -15,4 +15,5 @@
 # You should have received a copy of the GNU General Public License
 # along with CHARIOT. If not, see <https://www.gnu.org/licenses/>.
 
-gosh -r 7 -I.  -lwqy24/assert.sld -lwqy24/debug.sld -lwqy24/math.sld -lconfig.sld -lcurves.sld -lfool-env.sld -lfool.sld -lread.sld  test.scm > log
+ gosh -r 7 -I. -I..   test.scm > log
+#csi -R r7rs -I . -I ..   test.scm > log

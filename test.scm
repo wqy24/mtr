@@ -16,14 +16,18 @@
  | along with CHARIOT. If not, see <https://www.gnu.org/licenses/>.
  |#
 
-(import (scheme base) (scheme write) (scheme read) (srfi 41) (srfi 64) (scheme inexact) (scheme file) (chariot curves) (chariot fool) (chariot read))
+(import (scheme base) (scheme write) (scheme read) (srfi 41) (srfi 64) (scheme inexact) (scheme file) (chariot curves) (chariot fool) (chariot read) (chariot config) (judgement) (chariot render))
 
-(define (force-list l)
- (if (stream-pair? l) (cons (stream-car l) (force-list (stream-cdr l))) '()))
+
+(define (check-stream=list s l tester)
+ (cond
+  [(stream-null? s) (test-eq l '())]
+  [(null? l) (test-assert (stream-null? s))]
+  [else (tester (stream-car s) (car l)) (check-stream=list (stream-cdr s) (cdr l) tester)]))
 
 (test-group "bezier"
- (for-each (lambda (a b) (test-approximate b a 1e-9)) (force-list (bezier 44100 '(0 . 0) '(0.2 . -0.3) '(0.3 . 0.4) '(0.7 . 0.1) '(0.6 . 0.7) '(1 . 1))) (read (open-input-file "curve1")))
- (for-each (lambda (a b) (test-approximate b a 1e-9)) (force-list (bezier 44100 '(0 . 1) '(0.5 . 0.2) '(0.2 . 0.3) '(0.7 . 0.1) '(0.8 . -1) '(1 . 0))) (read (open-input-file "curve2")))
+ (check-stream=list (bezier 44100 '(0 . 0) '(0.2 . -0.3) '(0.3 . 0.4) '(0.7 . 0.1) '(0.6 . 0.7) '(1 . 1)) (read (open-input-file "curve1")) (lambda (a b) (test-approximate b a 1e-9)))
+ (check-stream=list (bezier 44100 '(0 . 1) '(0.5 . 0.2) '(0.2 . 0.3) '(0.7 . 0.1) '(0.8 . -1) '(1 . 0)) (read (open-input-file "curve2")) (lambda (a b) (test-approximate b a 1e-9)))
  (test-error "Bad curve" (bezier 3 '(0 . 1) '(0.6 . 0.2) '(0.6 . 0.4) '(0.8 . 0.3) '(0.1 . -0.8) '(1 . 0))))
 
 (test-group "fool"
@@ -40,9 +44,22 @@
    (if (procedure? a)
     (test-eq 'noflag-record!!! b)
     (test-approximate b a 1e-9)))
-  (for-each curve-checker
-   (force-list (get-curve 'freq notes head))
-   (read (open-input-file "freq.curve")))
-  (for-each curve-checker
-   (force-list (get-curve #\v notes head))
-   (read (open-input-file "v.curve")))))
+  (check-stream=list (get-curve 'freq notes head)
+   (read (open-input-file "freq.curve"))
+   curve-checker)
+  (check-stream=list (get-curve #\v notes head)
+   (read (open-input-file "v.curve"))
+   curve-checker)))
+
+(test-group "Engine interface"
+ (let* ([head1 (open-input-file "example.head")]
+        [head2 (open-input-file "all.head")]
+        [head (get-head head1 head2)]
+        [notes (get-notes (open-input-file "example.notes") head)]
+        [s (render-channel head notes)]
+        [lst (stream->list s)]
+        [expected (list (list (cons 'wish1 "Hail 2 U!"))
+                        (cons 'name 'wish1)
+                        (cons 'flags '())
+                        (cons 'sr SAMPLE-RATE))])
+  (test-equal lst expected)))

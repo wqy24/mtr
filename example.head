@@ -16,6 +16,6 @@
  | along with CHARIOT. If not, see <https://www.gnu.org/licenses/>.
  |#
 
-((engine . silver)
- (inst . sine)
+((engine . judgement)
+ (inst . wish1)
  (volume . #xAE))

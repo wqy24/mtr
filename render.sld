@@ -16,14 +16,14 @@
  |#
 
 (define-library (chariot render)
- (import (scheme eval) (scheme base) (chariot read) (chariot config) (scheme cxr))
- (export render)
+ (import (scheme eval) (scheme base) (chariot read) (chariot config) (srfi 1))
+ (export render-channel)
  (begin
   (define (render-channel head notes)
    (define engine (cdr (assq 'engine head)))
-   (define inst (assq 'inst head))
-   (define engine-desc (cdr (assoc engine (assq 'inst-conf head))))
-   (define env (environment (car engine-desc)))
+   (define inst (cdr (assq 'inst head)))
+   (define engine-desc (cdr (assoc engine (cdr (assq 'inst-conf head)))))
+   (define env (environment (car engine-desc) '(only (scheme base) quote)))
    (define config (cdr engine-desc))
-   (define-values [flags renderer] (car+cdr (eval (list 'renderer config) env)))
-   (renderer name (map (lambda (f) (get-curve inst notes head)) flags) SAMPLE-RATE))))
+   (define-values [flags renderer] (car+cdr (eval `(renderer ',config) env)))
+   (renderer inst (map (lambda (f) (get-curve inst notes head)) flags) SAMPLE-RATE))))
