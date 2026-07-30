@@ -17,6 +17,10 @@
 
 (define-library (chariot config)
  (import (only (scheme base) define))
- (export SAMPLE-RATE)
+ (export SAMPLE-RATE BITS-PER-SAMPLE ENDIANNESS SAMPLE-SIGN)
  (begin
-  (define SAMPLE-RATE 44100)))
+  (define SAMPLE-RATE 44100)
+  (define BITS-PER-SAMPLE 16)
+  (define BIG-ENDIAN #f) ; 'little or 'big
+  (define SIGNED #t) ; 'signed or 'unsigned
+ ))

@@ -16,8 +16,8 @@
  |#
 
 (define-library (chariot render)
- (import (scheme eval) (scheme base) (chariot read) (chariot config) (srfi 1))
- (export render-channel)
+ (import (scheme eval) (scheme base) (chariot read) (chariot config) (srfi 41) (srfi 1))
+ (export render-channel merge-channels)
  (begin
   (define (render-channel head notes)
    (define engine (cdr (assq 'engine head)))
@@ -26,4 +26,10 @@
    (define env (environment (car engine-desc) '(only (scheme base) quote)))
    (define config (cdr engine-desc))
    (define-values [flags renderer] (car+cdr (eval `(renderer ',config) env)))
-   (renderer inst (map (lambda (f) (get-curve inst notes head)) flags) SAMPLE-RATE))))
+   (renderer inst (map (lambda (f) (get-curve inst notes head)) flags) SAMPLE-RATE))
+
+  (define (merge-channels notes vols)
+   (when (> (fold + 0 vols) 1)
+    (error "Sum of vols more than 1" vols))
+   (apply stream-map +
+    (map (lambda (n v) (stream-map (lambda (x) (* x v)) n)) notes vols)))))

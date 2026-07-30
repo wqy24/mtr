@@ -37,4 +37,6 @@
     source
     (resonator source)))
   (judgement (judgement)
-   (wish1 . "Hail 2 U!"))))
+   (wish1 . "Hail 2 U!")))
+ (channels
+  ("example.head" . "example.notes")))

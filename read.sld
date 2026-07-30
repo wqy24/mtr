@@ -40,8 +40,8 @@
      `((0 . ,end) ,@c2 (1 . ,front))
      r)))
 
-  (define (get-head port1 port2)
-   (append (read port1) (read port2)))
+  (define (get-head head1 head2)
+   (append head1 head2))
 
   (define (get-ticks port)
    (let [[sexp (read port)]]
