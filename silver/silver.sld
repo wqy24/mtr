@@ -1,4 +1,4 @@
-#| render.sld -- this file is part of SILVER: Source-fILter Version sound EmitteR
+#| silver.sld -- this file is part of SILVER: SIne Layers to VariablE timbRes 
  | Copyright (C) 2026 wqy24
  |
  | SILVER is free software: you can redistribute it and/or modify
@@ -15,9 +15,22 @@
  | along with this program. If not, see <https://www.gnu.org/licenses/>.
  |#
 
-(define-library (silver render)
- (import (scheme base) (scheme eval))
+(define-library (silver)
+ (import (scheme base) (srfi 41) (srfi 1))
  (export renderer)
  (begin
   (define (renderer config)
-   (eval (cons 'waves config) (environment '(silver env macro) '(silver source-filter))))))
+   (values '(freq)
+    (lambda (name flags sr)
+     (let [[inst (cdr (assv name config))]
+           [freq (cdr (assq 'freq flags))]
+           [ilen (length inst)]]
+      (stream-map
+       (lambda (f i)
+        (apply +
+         (map
+          (lambda (x)
+           (let [[a (car x)] [ph (cdr x)]]
+            (cos (+ ph (* 2 (acos -1) (/ f sr) i)))))
+          inst (iota ilen))))
+       freq (stream-from 0))))))))
