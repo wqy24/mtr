@@ -23,8 +23,7 @@
    (values '(freq)
     (lambda (name flags sr)
      (let [[inst (cdr (assv name config))]
-           [freq (cdr (assq 'freq flags))]
-           [ilen (length inst)]]
+           [freq (cdr (assq 'freq flags))]]
       (stream-map
        (lambda (f i)
         (apply +
@@ -32,5 +31,5 @@
           (lambda (x)
            (let [[a (car x)] [ph (cdr x)]]
             (cos (+ ph (* 2 (acos -1) (/ f sr) i)))))
-          inst (iota ilen))))
+          inst (iota (length inst) 1 1))))
        freq (stream-from 0))))))))
