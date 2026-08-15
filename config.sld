@@ -16,11 +16,10 @@
  |#
 
 (define-library (chariot config)
- (import (only (scheme base) define))
- (export SAMPLE-RATE BITS-PER-SAMPLE ENDIANNESS SAMPLE-SIGN)
+ (import (only (scheme base) define make-parameter))
+ (export sample-rate byte-depth big-endian signed)
  (begin
-  (define SAMPLE-RATE 44100)
-  (define BITS-PER-SAMPLE 16)
-  (define BIG-ENDIAN #f) ; 'little or 'big
-  (define SIGNED #t) ; 'signed or 'unsigned
- ))
+  (define sample-rate (make-parameter 44100))
+  (define byte-depth (make-parameter 2))
+  (define big-endian (make-parameter #f))
+  (define signed (make-parameter #t))))

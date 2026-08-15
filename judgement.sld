@@ -1,4 +1,4 @@
-#| test.scm -- this file is used in the development of CHARIOT: Curves, Hackability And Restriction-less Instrument Oriented Tracker
+#| judgement -- this file is used in the development of CHARIOT: Curves, Hackability And Restriction-less Instrument Oriented Tracker
  | Copyright (C) 2026 wqy24
  | This file is under the same license as CHARIOT
  |
@@ -21,7 +21,7 @@
  (export renderer)
  (begin
   (define (renderer config)
-   (cons
+   (values
     '()
     (lambda (name flags sr)
      (stream config (cons 'name name) (cons 'flags flags) (cons 'sr sr)))))))
