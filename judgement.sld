@@ -17,7 +17,7 @@
  |#
 
 (define-library (judgement)
- (import (scheme base) (srfi 41))
+ (import (scheme base) (wqy24 vlws))
  (export renderer)
  (begin
   (define (renderer config)

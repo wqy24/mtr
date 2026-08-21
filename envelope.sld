@@ -1,4 +1,4 @@
-#| fool-env.sld -- this file is part of CHARIOT: Curves, Hackability And Restriction-less Instrument Oriented Tracker
+#| envelope.sld -- this file is part of CHARIOT: Curves, Hackability And Restriction-less Instrument Oriented Tracker
  | Copyright (C) 2026 wqy24
  |
  | CHARIOT is free software: you can redistribute it and/or modify
@@ -15,6 +15,12 @@
  | along with CHARIOT. If not, see <https://www.gnu.org/licenses/>.
  |#
 
-(define-library (chariot fool-env)
- (import (scheme base) (scheme inexact))
- (export + - * / < <= = >= > abs and or not truncate expt log sin cos asin acos tan atan sqrt exp cond else))
+(define-library (chariot envelope)
+ (import (scheme base) (wqy24 vlws) (wqy24 debug) (chariot inst-utils))
+ (export (rename envelope apply))
+ (begin
+  (define (envelope svol sdata)
+   (stream-map
+    (lambda (data vol)
+     (* data (expt 10 (if (positive? vol) 0 vol))))
+    sdata (with-default svol 0)))))

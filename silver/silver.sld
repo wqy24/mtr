@@ -16,7 +16,7 @@
  |#
 
 (define-library (silver)
- (import (scheme base) (srfi 41) (srfi 1) (scheme inexact) (chariot inst-utils))
+ (import (scheme base) (wqy24 vlws) (srfi 1) (scheme inexact) (chariot inst-utils))
  (export renderer)
  (begin
   (define (renderer config)

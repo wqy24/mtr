@@ -16,7 +16,7 @@
  |#
 
 (define-library (chariot inst-utils)
- (import (scheme base) (srfi 41))
+ (import (scheme base) (wqy24 vlws))
  (export with-default)
  (begin
   (define (with-default s d)

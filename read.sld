@@ -16,7 +16,7 @@
  |#
 
 (define-library (chariot read)
- (import (scheme base) (scheme read) (wqy24 assert) (wqy24 debug) (chariot config) (chariot fool) (chariot curves) (srfi 41) (srfi 132) (srfi 1) (srfi 133))
+ (import (scheme base) (scheme read) (wqy24 assert) (wqy24 debug) (chariot config) (chariot fool) (chariot curves) (wqy24 vlws) (srfi 132) (only (srfi 1) cons*) (srfi 133))
  (export get-curve get-head get-notes)
  (begin
   (define-record-type curve-record-record
@@ -44,7 +44,7 @@
    (append head1 head2))
 
   (define (get-notes data head)
-   (define frames/tick (truncate (* (sample-rate) (cdr (assq 'tempo head)))))
+   (define frames/tick (truncate (/ (sample-rate) (cdr (assq 'tempo head)))))
    (define ticks (list->stream data))
    (let next-tick [[cticks ticks]]
     (if (stream-null? cticks)

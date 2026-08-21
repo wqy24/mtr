@@ -16,7 +16,7 @@
  |#
 
 (define-library (chariot curves)
- (import (scheme base) (scheme lazy) (srfi 1) (srfi 41) (wqy24 assert) (wqy24 math))
+ (import (scheme base) (scheme lazy) (only (srfi 1) every car+cdr) (wqy24 vlws) (wqy24 assert) (wqy24 math))
  (export bezier constant-line)
  (begin
   (define (curvepoint-deriv1 p0 p1 p2 p3 p4 p5)

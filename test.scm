@@ -17,7 +17,7 @@
  |#
 
 (import
- (scheme base) (scheme write) (scheme read) (srfi 41) (srfi 64) (srfi 1) (scheme inexact) (scheme file) (scheme load)
+ (scheme base) (scheme write) (scheme read) (wqy24 vlws) (srfi 64) (srfi 1) (scheme inexact) (scheme file) (scheme load)
  (chariot curves) (chariot fool) (chariot read) (chariot config) (judgement) (chariot render) (chariot codec))
 
 

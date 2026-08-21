@@ -15,7 +15,7 @@
  | along with CHARIOT. If not, see <https://www.gnu.org/licenses/>.
  |#
 
-(import (scheme base) (scheme cxr) (scheme read) (srfi 41) (chariot config) (chariot read) (chariot render) (chariot codec) (wqy24 debug))
+(import (scheme base) (scheme cxr) (scheme read) (wqy24 vlws) (chariot config) (chariot read) (chariot render) (chariot codec) (wqy24 debug))
 
 (define module (read))
 
@@ -41,13 +41,15 @@
    [[play]
     (let* [[start-frm (cadr command)]
            [len (caddr command)]
-           [chns (map (lambda (c) (cons (car c) (stream-drop start-frm (cdr c)))) channels)]]
+           [chns (map (lambda (c) (cons (car c) (stream-drop (cdr c) start-frm))) channels)]
+           [audio-stream
+            (merge-channels
+             (map (lambda (c) (render-channel (car c) (cdr c))) chns)
+             (map (lambda (c) (cdr (assq 'volume (car c)))) chns))]]
      (write-bytevector
       (codec
-       (stream->list len
-        (merge-channels
-         (map (lambda (c) (render-channel (car c) (cdr c))) chns)
-         (map (lambda (c) (cdr (assq 'volume (car c)))) chns))))))
+       (stream->list
+        (if (integer? len) (stream-take audio-stream len) audio-stream)))))
     (again (read))]
    [[tmp-set]
     (let [[p (assq (cadr command) module)]]
@@ -55,4 +57,4 @@
       (set-cdr! p (caddr command))
       (set! module (cons (cons (cadr command) (caddr command)) module))))
     (again (read))]
-   [[exit]])))
+   [[exit] 0])))

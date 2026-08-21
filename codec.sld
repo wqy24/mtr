@@ -16,7 +16,7 @@
  |#
 
 (define-library (chariot codec)
- (import (except (scheme base) define) (srfi 1) (srfi 197) (only (srfi 219) define) (chariot config) (scheme write))
+ (import (except (scheme base) define) (only (srfi 1) every concatenate) (only (srfi 219) define) (chariot config) (scheme write))
  (export codec)
  (begin
   (define ((scale byte-depth) data)
@@ -38,9 +38,7 @@
   (define (codec data)
    (unless (every (lambda (d) (<= -1 d 1)) data) (error "Data out of range" data))
    (unless (integer? byte-depth) "Byte depth must be integer" byte-depth)
-   (chain data
-    (map (scale (byte-depth)) _)
-    (if (signed) _ (map (unsign byte-depth) _))
-    (map (explode (byte-depth) (big-endian)) _)
-    (concatenate _)
-    (apply bytevector _)))))
+    (let* [[sdata (map (scale (byte-depth)) data)]
+           [idata (if (signed) sdata (map (unsign byte-depth) sdata))]
+           [exploded (map (explode (byte-depth) (big-endian)) idata)]]
+     (apply bytevector (concatenate exploded))))))
