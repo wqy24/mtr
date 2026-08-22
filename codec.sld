@@ -20,7 +20,7 @@
  (export codec)
  (begin
   (define ((scale byte-depth) data)
-   (truncate (* data (- (expt 2 (- (* 8 byte-depth) 1)) 1))))
+   (exact (truncate (* data (- (expt 2 (- (* 8 byte-depth) 1)) 1)))))
 
   (define ((unsign byte-depth) data)
    (+ data (expt 2 (- (* 8 byte-depth) 1))))
@@ -36,9 +36,10 @@
       (- rbdepth 1)))))
 
   (define (codec data)
-   (unless (every (lambda (d) (<= -1 d 1)) data) (error "Data out of range" data))
-   (unless (integer? byte-depth) "Byte depth must be integer" byte-depth)
-    (let* [[sdata (map (scale (byte-depth)) data)]
-           [idata (if (signed) sdata (map (unsign byte-depth) sdata))]
-           [exploded (map (explode (byte-depth) (big-endian)) idata)]]
-     (apply bytevector (concatenate exploded))))))
+   (unless (integer? (byte-depth)) (error "Byte depth must be integer" (byte-depth)))
+   (unless (positive? (byte-depth)) (error "Byte depth must be positive" (byte-depth)))
+   (let* [[cldata (map (lambda (x) (cond [(negative? x) 0] [(> x 1) 1] [else x])) data)]
+          [sdata (map (scale (byte-depth)) cldata)]
+          [idata (if (signed) sdata (map (unsign (byte-depth)) sdata))]
+          [exploded (map (explode (byte-depth) (big-endian)) idata)]]
+    (apply bytevector (concatenate exploded))))))

@@ -43,17 +43,16 @@
   (define (get-head head1 head2)
    (append head1 head2))
 
-  (define (get-notes data head)
+  (define (get-notes ticks head)
    (define frames/tick (truncate (/ (sample-rate) (cdr (assq 'tempo head)))))
-   (define ticks (list->stream data))
    (let next-tick [[cticks ticks]]
-    (if (stream-null? cticks)
+    (if (null? cticks)
      stream-null
-     (let [[curr-tick (stream-car cticks)]]
+     (let [[curr-tick (car cticks)]]
       (let next-frame [[frames 0] [notes (list-sort (lambda (a b) (<= (car a) (car b))) curr-tick)]]
        (if (>= frames frames/tick)
-        (next-tick (stream-cdr cticks))
-        (let [[result (if (or (not (pair? notes)) (< frames (* (sample-rate) (caar notes)))) #f (car notes))]]
+        (next-tick (cdr cticks))
+        (let [[result (if (or (not (pair? notes)) (< frames (* frames/tick (caar notes)))) #f (car notes))]]
          (stream-cons result (next-frame (+ frames 1) (if result (cdr notes) notes))))))))))
 
   (define (curve-length name notes) ; in frames
@@ -135,7 +134,7 @@
            (curve-length 'freq c-notes))]
          [else (stream 0)])))]
      [else
-      (let [[flagpair (assv name (stream-car c-notes))]]
+      (let [[flagpair (assv name (cddr (stream-car c-notes)))]]
        (if flagpair
         (loop
          c-notes

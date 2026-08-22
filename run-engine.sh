@@ -16,5 +16,6 @@
 # along with CHARIOT. If not, see <https://www.gnu.org/licenses/>.
 
 
-cat example.chm commands | gosh -r 7 -I . -I .. -I ./silver/ chariot-engine.scm > a.out
-# cat example.chm commands | gsi -:r7rs,search=.,search=..,search=../chibi-scheme/lib chariot-engine.scm > a.out
+# cat example.chm commands | gosh -r 7 -I . -I .. -I ./silver/ chariot-engine.scm > a.out
+ cat example.chm commands | chibi-scheme -B#t -I . -I .. -I ./silver/ -I ./wqy24/ chariot-engine.scm
+
